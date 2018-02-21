@@ -20,7 +20,8 @@ CREATE TABLE [dbo].[CommandLog](
 [StartTime] datetime NOT NULL,
 [EndTime] datetime NULL,
 [ErrorNumber] int NULL,
-[ErrorMessage] nvarchar(max) NULL
+[ErrorMessage] nvarchar(max) NULL,
+[LoadGUID] nvarchar(36) NULL
 )
 GO
 

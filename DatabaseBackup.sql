@@ -39,7 +39,8 @@ CREATE PROCEDURE [dbo].[DatabaseBackup]
 @AvailabilityGroups nvarchar(max) = NULL,
 @Updateability nvarchar(max) = 'ALL',
 @LogToTable nvarchar(max) = 'N',
-@Execute nvarchar(max) = 'Y'
+@Execute nvarchar(max) = 'Y',
+@LoadGUID nvarchar(36) = NULL
 
 AS
 
@@ -1227,7 +1228,7 @@ BEGIN
 
         SET @CurrentCommandType01 = 'xp_create_subdir'
         SET @CurrentCommand01 = 'DECLARE @ReturnCode int EXECUTE @ReturnCode = [master].dbo.xp_create_subdir N''' + REPLACE(@CurrentDirectoryPath,'''','''''') + ''' IF @ReturnCode <> 0 RAISERROR(''Error creating directory.'', 16, 1)'
-        EXECUTE @CurrentCommandOutput01 = [dbo].[CommandExecute] @Command = @CurrentCommand01, @CommandType = @CurrentCommandType01, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute
+        EXECUTE @CurrentCommandOutput01 = [dbo].[CommandExecute] @Command = @CurrentCommand01, @CommandType = @CurrentCommandType01, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute, @LoadGUID = @LoadGUID
         SET @Error = @@ERROR
         IF @Error <> 0 SET @CurrentCommandOutput01 = @Error
         IF @CurrentCommandOutput01 <> 0 SET @ReturnCode = @CurrentCommandOutput01
@@ -1321,7 +1322,7 @@ BEGIN
             SET @CurrentCommand02 = 'DECLARE @ReturnCode int EXECUTE @ReturnCode = [master].dbo.xp_ss_delete @filename = N''' + REPLACE(@CurrentDirectoryPath,'''','''''') + '\*.' + @CurrentFileExtension + ''', @age = ''' + CAST(DATEDIFF(mi,@CurrentCleanupDate,GETDATE()) + 1 AS nvarchar) + 'Minutes'' IF @ReturnCode <> 0 RAISERROR(''Error deleting SQLsafe backup files.'', 16, 1)'
           END
 
-          EXECUTE @CurrentCommandOutput02 = [dbo].[CommandExecute] @Command = @CurrentCommand02, @CommandType = @CurrentCommandType02, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute
+          EXECUTE @CurrentCommandOutput02 = [dbo].[CommandExecute] @Command = @CurrentCommand02, @CommandType = @CurrentCommandType02, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute, @LoadGUID = @LoadGUID
           SET @Error = @@ERROR
           IF @Error <> 0 SET @CurrentCommandOutput02 = @Error
           IF @CurrentCommandOutput02 <> 0 SET @ReturnCode = @CurrentCommandOutput02
@@ -1540,7 +1541,7 @@ BEGIN
           SET @CurrentCommand03 = @CurrentCommand03 + ' IF @ReturnCode <> 0 RAISERROR(''Error performing SQLsafe backup.'', 16, 1)'
         END
 
-        EXECUTE @CurrentCommandOutput03 = [dbo].[CommandExecute] @Command = @CurrentCommand03, @CommandType = @CurrentCommandType03, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute
+        EXECUTE @CurrentCommandOutput03 = [dbo].[CommandExecute] @Command = @CurrentCommand03, @CommandType = @CurrentCommandType03, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute, @LoadGUID = @LoadGUID
         SET @Error = @@ERROR
         IF @Error <> 0 SET @CurrentCommandOutput03 = @Error
         IF @CurrentCommandOutput03 <> 0 SET @ReturnCode = @CurrentCommandOutput03
@@ -1627,7 +1628,7 @@ BEGIN
             SET @CurrentCommand04 = @CurrentCommand04 + ' IF @ReturnCode <> 0 RAISERROR(''Error verifying SQLsafe backup.'', 16, 1)'
           END
 
-          EXECUTE @CurrentCommandOutput04 = [dbo].[CommandExecute] @Command = @CurrentCommand04, @CommandType = @CurrentCommandType04, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute
+          EXECUTE @CurrentCommandOutput04 = [dbo].[CommandExecute] @Command = @CurrentCommand04, @CommandType = @CurrentCommandType04, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute, @LoadGUID = @LoadGUID
           SET @Error = @@ERROR
           IF @Error <> 0 SET @CurrentCommandOutput04 = @Error
           IF @CurrentCommandOutput04 <> 0 SET @ReturnCode = @CurrentCommandOutput04
@@ -1723,7 +1724,7 @@ BEGIN
             SET @CurrentCommand05 = 'DECLARE @ReturnCode int EXECUTE @ReturnCode = [master].dbo.xp_ss_delete @filename = N''' + REPLACE(@CurrentDirectoryPath,'''','''''') + '\*.' + @CurrentFileExtension + ''', @age = ''' + CAST(DATEDIFF(mi,@CurrentCleanupDate,GETDATE()) + 1 AS nvarchar) + 'Minutes'' IF @ReturnCode <> 0 RAISERROR(''Error deleting SQLsafe backup files.'', 16, 1)'
           END
 
-          EXECUTE @CurrentCommandOutput05 = [dbo].[CommandExecute] @Command = @CurrentCommand05, @CommandType = @CurrentCommandType05, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute
+          EXECUTE @CurrentCommandOutput05 = [dbo].[CommandExecute] @Command = @CurrentCommand05, @CommandType = @CurrentCommandType05, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute, @LoadGUID = @LoadGUID
           SET @Error = @@ERROR
           IF @Error <> 0 SET @CurrentCommandOutput05 = @Error
           IF @CurrentCommandOutput05 <> 0 SET @ReturnCode = @CurrentCommandOutput05

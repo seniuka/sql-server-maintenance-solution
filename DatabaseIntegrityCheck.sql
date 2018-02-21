@@ -18,8 +18,8 @@ CREATE PROCEDURE [dbo].[DatabaseIntegrityCheck]
 @Updateability nvarchar(max) = 'ALL',
 @LockTimeout int = NULL,
 @LogToTable nvarchar(max) = 'N',
-@Execute nvarchar(max) = 'Y'
-
+@Execute nvarchar(max) = 'Y',
+@LoadGUID nvarchar(36) = NULL
 AS
 
 BEGIN
@@ -745,7 +745,7 @@ BEGIN
         IF @TabLock = 'Y' SET @CurrentCommand01 = @CurrentCommand01 + ', TABLOCK'
         IF @MaxDOP IS NOT NULL SET @CurrentCommand01 = @CurrentCommand01 + ', MAXDOP = ' + CAST(@MaxDOP AS nvarchar)
 
-        EXECUTE @CurrentCommandOutput01 = [dbo].[CommandExecute] @Command = @CurrentCommand01, @CommandType = @CurrentCommandType01, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute
+        EXECUTE @CurrentCommandOutput01 = [dbo].[CommandExecute] @Command = @CurrentCommand01, @CommandType = @CurrentCommandType01, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute, @LoadGUID = @LoadGUID
         SET @Error = @@ERROR
         IF @Error <> 0 SET @CurrentCommandOutput01 = @Error
         IF @CurrentCommandOutput01 <> 0 SET @ReturnCode = @CurrentCommandOutput01
@@ -826,7 +826,7 @@ BEGIN
             IF @TabLock = 'Y' SET @CurrentCommand04 = @CurrentCommand04 + ', TABLOCK'
             IF @MaxDOP IS NOT NULL SET @CurrentCommand04 = @CurrentCommand04 + ', MAXDOP = ' + CAST(@MaxDOP AS nvarchar)
 
-            EXECUTE @CurrentCommandOutput04 = [dbo].[CommandExecute] @Command = @CurrentCommand04, @CommandType = @CurrentCommandType04, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute
+            EXECUTE @CurrentCommandOutput04 = [dbo].[CommandExecute] @Command = @CurrentCommand04, @CommandType = @CurrentCommandType04, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute, @LoadGUID = @LoadGUID
             SET @Error = @@ERROR
             IF @Error <> 0 SET @CurrentCommandOutput04 = @Error
             IF @CurrentCommandOutput04 <> 0 SET @ReturnCode = @CurrentCommandOutput04
@@ -863,7 +863,7 @@ BEGIN
         SET @CurrentCommand05 = @CurrentCommand05 + ') WITH NO_INFOMSGS, ALL_ERRORMSGS'
         IF @TabLock = 'Y' SET @CurrentCommand05 = @CurrentCommand05 + ', TABLOCK'
 
-        EXECUTE @CurrentCommandOutput05 = [dbo].[CommandExecute] @Command = @CurrentCommand05, @CommandType = @CurrentCommandType05, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute
+        EXECUTE @CurrentCommandOutput05 = [dbo].[CommandExecute] @Command = @CurrentCommand05, @CommandType = @CurrentCommandType05, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute, @LoadGUID = @LoadGUID
         SET @Error = @@ERROR
         IF @Error <> 0 SET @CurrentCommandOutput05 = @Error
         IF @CurrentCommandOutput05 <> 0 SET @ReturnCode = @CurrentCommandOutput05
@@ -949,7 +949,7 @@ BEGIN
             IF @TabLock = 'Y' SET @CurrentCommand08 = @CurrentCommand08 + ', TABLOCK'
             IF @MaxDOP IS NOT NULL SET @CurrentCommand08 = @CurrentCommand08 + ', MAXDOP = ' + CAST(@MaxDOP AS nvarchar)
 
-            EXECUTE @CurrentCommandOutput08 = [dbo].[CommandExecute] @Command = @CurrentCommand08, @CommandType = @CurrentCommandType08, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @SchemaName = @CurrentSchemaName, @ObjectName = @CurrentObjectName, @ObjectType = @CurrentObjectType, @LogToTable = @LogToTable, @Execute = @Execute
+            EXECUTE @CurrentCommandOutput08 = [dbo].[CommandExecute] @Command = @CurrentCommand08, @CommandType = @CurrentCommandType08, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @SchemaName = @CurrentSchemaName, @ObjectName = @CurrentObjectName, @ObjectType = @CurrentObjectType, @LogToTable = @LogToTable, @Execute = @Execute, @LoadGUID = @LoadGUID
             SET @Error = @@ERROR
             IF @Error <> 0 SET @CurrentCommandOutput08 = @Error
             IF @CurrentCommandOutput08 <> 0 SET @ReturnCode = @CurrentCommandOutput08
@@ -988,7 +988,7 @@ BEGIN
         SET @CurrentCommand09 = @CurrentCommand09 + 'DBCC CHECKCATALOG (' + QUOTENAME(@CurrentDatabaseName)
         SET @CurrentCommand09 = @CurrentCommand09 + ') WITH NO_INFOMSGS'
 
-        EXECUTE @CurrentCommandOutput09 = [dbo].[CommandExecute] @Command = @CurrentCommand09, @CommandType = @CurrentCommandType09, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute
+        EXECUTE @CurrentCommandOutput09 = [dbo].[CommandExecute] @Command = @CurrentCommand09, @CommandType = @CurrentCommandType09, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute, @LoadGUID = @LoadGUID
         SET @Error = @@ERROR
         IF @Error <> 0 SET @CurrentCommandOutput09 = @Error
         IF @CurrentCommandOutput09 <> 0 SET @ReturnCode = @CurrentCommandOutput09

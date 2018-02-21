@@ -18,7 +18,8 @@ CREATE PROCEDURE [dbo].[CommandExecute]
 @PartitionNumber int = NULL,
 @ExtendedInfo xml = NULL,
 @LogToTable nvarchar(max),
-@Execute nvarchar(max)
+@Execute nvarchar(max),
+@LoadGUID nvarchar(36) = NULL
 
 AS
 
@@ -126,8 +127,8 @@ BEGIN
 
   IF @LogToTable = 'Y'
   BEGIN
-    INSERT INTO dbo.CommandLog (DatabaseName, SchemaName, ObjectName, ObjectType, IndexName, IndexType, StatisticsName, PartitionNumber, ExtendedInfo, CommandType, Command, StartTime)
-    VALUES (@DatabaseName, @SchemaName, @ObjectName, @ObjectType, @IndexName, @IndexType, @StatisticsName, @PartitionNumber, @ExtendedInfo, @CommandType, @Command, @StartTime)
+    INSERT INTO dbo.CommandLog (DatabaseName, SchemaName, ObjectName, ObjectType, IndexName, IndexType, StatisticsName, PartitionNumber, ExtendedInfo, CommandType, Command, StartTime, LoadGUID)
+    VALUES (@DatabaseName, @SchemaName, @ObjectName, @ObjectType, @IndexName, @IndexType, @StatisticsName, @PartitionNumber, @ExtendedInfo, @CommandType, @Command, @StartTime, @LoadGUID)
   END
 
   SET @ID = SCOPE_IDENTITY()
