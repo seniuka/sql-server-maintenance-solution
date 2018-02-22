@@ -34,6 +34,7 @@ BEGIN
   DECLARE @EndMessage nvarchar(max)
   DECLARE @DatabaseMessage nvarchar(max)
   DECLARE @ErrorMessage nvarchar(max)
+  DECLARE @ExtendedInfo XML
 
   DECLARE @Version numeric(18,10)
   DECLARE @AmazonRDS bit
@@ -134,6 +135,8 @@ BEGIN
                                   Selected bit)
 
   DECLARE @SelectedCheckCommands TABLE (CheckCommand nvarchar(max))
+  
+  DECLARE @ReadErrorLog TABLE (LogDate datetime, ProcessInfo nvarchar(50), MessageData nvarchar(max), Line int identity(1,1))
 
   DECLARE @Error int
   DECLARE @ReturnCode int
@@ -745,7 +748,17 @@ BEGIN
         IF @TabLock = 'Y' SET @CurrentCommand01 = @CurrentCommand01 + ', TABLOCK'
         IF @MaxDOP IS NOT NULL SET @CurrentCommand01 = @CurrentCommand01 + ', MAXDOP = ' + CAST(@MaxDOP AS nvarchar)
 
-        EXECUTE @CurrentCommandOutput01 = [dbo].[CommandExecute] @Command = @CurrentCommand01, @CommandType = @CurrentCommandType01, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute, @LoadGUID = @LoadGUID
+	
+	IF @LogToTable = 'Y' 
+	BEGIN
+		SET @ExtendedInfo = NULL
+		DELETE FROM @ReadErrorLog 
+		SET @CurrentDatabaseName = QUOTENAME(@CurrentDatabaseName, '(')
+		INSERT INTO @ReadErrorLog EXEC sys.xp_readerrorlog 0, 1, N'DBCC CHECKDB', @CurrentDatabaseName
+		SELECT TOP 1 @ExtendedInfo = CAST(MessageData as XML) FROM @ReadErrorLog order by LogDate desc
+	END
+
+        EXECUTE @CurrentCommandOutput01 = [dbo].[CommandExecute] @Command = @CurrentCommand01, @CommandType = @CurrentCommandType01, @Mode = 1, @DatabaseName = @CurrentDatabaseName, @LogToTable = @LogToTable, @Execute = @Execute, @LoadGUID = @LoadGUID, @ExtendedInfo = @ExtendedInfo 
         SET @Error = @@ERROR
         IF @Error <> 0 SET @CurrentCommandOutput01 = @Error
         IF @CurrentCommandOutput01 <> 0 SET @ReturnCode = @CurrentCommandOutput01
